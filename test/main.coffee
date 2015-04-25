@@ -130,6 +130,16 @@ describe 'nvalidr/', () ->
 			cnv = nvalidr(org).replace(nvalidr.Z_KIGO).s
 			assert cnv == '．，！？”’‘＠＿：；＃＄％＆（）－＝＊＋－／＜＞［￥］＾｛｜｝～、。「」・ー'
 
+		it '半角スペース => 全角スペース', () ->
+			org = ' '
+			cnv = nvalidr(org).replace(nvalidr.Z_SPACE).s
+			assert cnv == '　'
+
+		it '全角スペース => 半角スペース', () ->
+			org = '　'
+			cnv = nvalidr(org).replace(nvalidr.H_SPACE).s
+			assert cnv == ' '
+
 
 	describe 'validation/', () ->
 		it 'ひらがなのみ', () ->
