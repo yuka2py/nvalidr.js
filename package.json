@@ -1,0 +1,38 @@
+{
+  "name": "nvalidr",
+  "version": "0.0.1",
+  "description": "validation/normalizing for Japanese",
+  "main": "dist/nvalidr.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuka2py/nvalidr.js.git"
+  },
+  "scripts": {
+    "test": "mocha --require 'espower-coffee/guess' test/**/*.coffee"
+  },
+  "keywords": [
+    "japanese",
+    "validation",
+    "normalizing",
+    "kana",
+    "hiragana",
+    "katakana"
+  ],
+  "author": "yuka2py",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yuka2py/nvalidr.js/issues"
+  },
+  "homepage": "https://github.com/yuka2py/nvalidr.js#readme",
+  "dependencies": {
+    "moment": "^2.10.2"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.9.2",
+    "espower-coffee": "^0.10.0",
+    "power-assert": "^0.11.0"
+  }
+}
