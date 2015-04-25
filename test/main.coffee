@@ -51,10 +51,10 @@ describe 'nvalidr/', () ->
 
 		it 'wit options and error', () ->
 			org = 'あいう';
-			errmsg = null
+			err = null
 			nvalidr(org).date {format:'YYYY/MM/DD'}, () ->
-				errmsg = '日付じゃありません'
-			assert errmsg == '日付じゃありません'
+				err = '日付じゃありません'
+			assert err == '日付じゃありません'
 
 
 	describe 'replace/', () ->
@@ -86,9 +86,9 @@ describe 'nvalidr/', () ->
 			assert cnv == 'あいうえおかさたなはまやらわん'
 
 		it '全角かたかな => 半角かたかな', () ->
-			org = 'アイウエオカサタナハマヤラワンガプ、。「」・ー'
+			org = 'アイウエオカサタナハマヤラワンガプ'
 			cnv = nvalidr(org).replace(nvalidr.H_KATA).s
-			assert cnv == 'ｱｲｳｴｵｶｻﾀﾅﾊﾏﾔﾗﾜﾝｶﾞﾌﾟ､｡｢｣･ｰ'
+			assert cnv == 'ｱｲｳｴｵｶｻﾀﾅﾊﾏﾔﾗﾜﾝｶﾞﾌﾟ'
 
 		it '全角ひらがな => 全角かたかな', () ->
 			org = 'あいうえおかさたなはまやらわん'
@@ -96,9 +96,9 @@ describe 'nvalidr/', () ->
 			assert cnv == 'アイウエオカサタナハマヤラワン'
 
 		it '全角ひらがな => 半角かたかな', () ->
-			org = 'あいうえおかさたなはまやらわんがぷ、。「」・ー'
+			org = 'あいうえおかさたなはまやらわんがぷ'
 			cnv = nvalidr(org).replace(nvalidr.HIRA2KATA, nvalidr.H_KATA).s
-			assert cnv == 'ｱｲｳｴｵｶｻﾀﾅﾊﾏﾔﾗﾜﾝｶﾞﾌﾟ､｡｢｣･ｰ'
+			assert cnv == 'ｱｲｳｴｵｶｻﾀﾅﾊﾏﾔﾗﾜﾝｶﾞﾌﾟ'
 
 		it '全角アルファベット => 半角アルファベット', () ->
 			org = 'ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ'
@@ -111,9 +111,9 @@ describe 'nvalidr/', () ->
 			assert cnv == '0123456789'
 
 		it '全角記号 => 半角記号', () ->
-			org = '．，！？”’‘＠＿：；＃＄％＆（）－＝＊＋－／＜＞［￥］＾｛｜｝～'
+			org = '．，！？”’‘＠＿：；＃＄％＆（）－＝＊＋－／＜＞［￥］＾｛｜｝～、。「」・ー'
 			cnv = nvalidr(org).replace(nvalidr.H_KIGO).s
-			assert cnv == '.,!?"\'`@_:;#$%&()-=*+-/<>[¥]^{|}~'
+			assert cnv == '.,!?"\'`@_:;#$%&()-=*+-/<>[¥]^{|}~､｡｢｣･ｰ'
 
 		it '半角アルファベット => 全角アルファベット', () ->
 			org = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -126,9 +126,35 @@ describe 'nvalidr/', () ->
 			assert cnv == '０１２３４５６７８９'
 
 		it '半角記号 => 全角記号', () ->
-			org = '.,!?"\'`@_:;#$%&()-=*+-/<>[¥]^{|}~'
+			org = '.,!?"\'`@_:;#$%&()-=*+-/<>[¥]^{|}~､｡｢｣･ｰ'
 			cnv = nvalidr(org).replace(nvalidr.Z_KIGO).s
-			assert cnv == '．，！？”’‘＠＿：；＃＄％＆（）－＝＊＋－／＜＞［￥］＾｛｜｝～'
+			assert cnv == '．，！？”’‘＠＿：；＃＄％＆（）－＝＊＋－／＜＞［￥］＾｛｜｝～、。「」・ー'
+
+
+	describe 'validation/', () ->
+		it 'ひらがなのみ', () ->
+			org = 'ｶﾗﾊﾞｲﾖばーすﾛｯﾃ'
+			cnv = nvalidr(org).hiragana().s
+			assert cnv == 'からばいよばーすろって'
+
+		it 'ひらがなのみ => 失敗', () ->
+			err = null
+			nvalidr('ｶﾗﾊﾞｲﾖ漢字ばーすﾛｯﾃ').hiragana(() ->
+				err = 'ひらがなで入力してください。'
+			)
+			assert err == 'ひらがなで入力してください。'
+
+		it 'カタカナのみ', () ->
+			org = 'ｶﾗﾊﾞｲﾖばーすﾛｯﾃ'
+			cnv = nvalidr(org).katakana().s
+			assert cnv == 'カラバイヨバースロッテ'
+
+		it 'カタカナのみ => 失敗', () ->
+			err = null
+			nvalidr('ｶﾗﾊﾞｲﾖ漢字ばーすﾛｯﾃ').katakana(() ->
+				err = 'カタカナで入力してください。'
+			)
+			assert err == 'カタカナで入力してください。'
 
 
 

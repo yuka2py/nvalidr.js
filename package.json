@@ -1,8 +1,8 @@
 {
   "name": "nvalidr",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "validation/normalizing for Japanese",
-  "main": "dist/nvalidr.js",
+  "main": "lib/nvalidr.js",
   "directories": {
     "test": "test"
   },
