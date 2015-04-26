@@ -59,16 +59,6 @@ describe 'nvalidr/', () ->
 
 	describe 'replace/', () ->
 
-		it 'from/dest string', () ->
-			org = 'あいうえお'
-			dst = nvalidr(org).replace('い', 'あ').s
-			assert dst == 'ああうえお'
-
-		it 'map of object', () ->
-			org = 'あいうえお'
-			dst = nvalidr(org).replace({'い':'あ','う':'あ'}).s
-			assert dst == 'あああえお'
-
 		it 'map of array', () ->
 			org = 'あいうえお'
 			dst = nvalidr(org).replace([['い','あ'],['う','あ']]).s
@@ -78,7 +68,6 @@ describe 'nvalidr/', () ->
 			org = 'あいうえお'
 			dst = nvalidr(org).replace([[/[あいうえお]/g, 'あ'],[/(あ{3})(あ{2})/, '$1-$2']]).s
 			assert dst == 'あああ-ああ'
-
 
 		it '全角かたかな => 全角ひらがな', () ->
 			org = 'アイウエオカサタナハマヤラワン'
@@ -139,6 +128,16 @@ describe 'nvalidr/', () ->
 			org = '　'
 			cnv = nvalidr(org).replace(nvalidr.H_SPACE).s
 			assert cnv == ' '
+
+		it 'skip chars', () ->
+			org = '０１２３４５６７８９'
+			cnv = nvalidr(org).replace(nvalidr.H_NUM, { skip:'７８' }).s
+			assert cnv == '0123456７８9'
+
+		it 'extra chars', () ->
+			org = '０１２３４５６７．８９'
+			cnv = nvalidr(org).replace(nvalidr.H_NUM, { extra:[['．','.']] }).s
+			assert cnv == '01234567.89'
 
 
 	describe 'validation/', () ->
