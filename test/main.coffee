@@ -141,15 +141,21 @@ describe 'nvalidr/', () ->
 
 
 	describe 'validation/', () ->
+
+		it 'normtext', () ->
+			org = 'ｶﾗﾊﾞｲﾖあかさたな松本伊代０２３４ＡＢＣ、。「」'
+			cnv = nvalidr(org).normtext().s
+			assert cnv == 'カラバイヨあかさたな松本伊代0234ABC、。「」'
+
 		it 'hiragana', () ->
 			org = 'ｶﾗﾊﾞｲﾖばーすﾛｯﾃ'
 			cnv = nvalidr(org).hiragana().s
 			assert cnv == 'からばいよばーすろって'
+
 		it 'hiragana => failed', () ->
 			err = null
-			nvalidr('ｶﾗﾊﾞｲﾖ漢字ばーすﾛｯﾃ').hiragana(() ->
+			nvalidr('ｶﾗﾊﾞｲﾖ漢字ばーすﾛｯﾃ').hiragana () ->
 				err = 'ひらがなで入力してください。'
-			)
 			assert err == 'ひらがなで入力してください。'
 
 		it 'katakana', () ->
@@ -158,9 +164,29 @@ describe 'nvalidr/', () ->
 			assert cnv == 'カラバイヨバースロッテ'
 
 		it 'number', () ->
-			org = '-0１２，347．２あ'
+			org = '0１２347２'
 			cnv = nvalidr(org).number().s
+			assert cnv == '0123472'
+
+		it 'int', () ->
+			org = '-0１２，347'
+			cnv = nvalidr(org).int().s
+			assert cnv == '-012347'
+
+		it 'float', () ->
+			org = '-0１２，347．２'
+			cnv = nvalidr(org).float().s
 			assert cnv == '-012347.2'
+
+		it 'alpha', () ->
+			org = 'ａｂｃｄｅｆｇＨＩＪＫＬＭＮ'
+			cnv = nvalidr(org).alpha().s
+			assert cnv == 'abcdefgHIJKLMN'
+
+		it 'alphanum', () ->
+			org = '0123ABＸＹＺ７８９'
+			cnv = nvalidr(org).alphanum().s
+			assert cnv == '0123ABXYZ789'
 
 		it 'phone', () ->
 			org = '０１２３−４５６７ー８９０漢字'
@@ -171,6 +197,77 @@ describe 'nvalidr/', () ->
 			org = 'ｉｎｆｏ＠ｈｏｇｅｈｏｇｅ.com';
 			cnv = nvalidr(org).email().s
 			assert cnv == 'info@hogehoge.com'
+
+		it 'maxlen => success', () ->
+			errmsg = null;
+			nvalidr('１２３４５６７').maxlen(7, () ->
+					errmsg = '7文字以内で入力してください。'
+				).s
+			assert errmsg == null;
+
+		it 'maxlen => fail', () ->
+			errmsg = null;
+			nvalidr('１２３４５６７８').maxlen(7, () ->
+					errmsg = '7文字以内で入力してください。'
+				).s
+			assert errmsg == '7文字以内で入力してください。'
+
+		it 'minlen => success', () ->
+			errmsg = null;
+			nvalidr('１２３４５６７').minlen(7, () ->
+					errmsg = '7文字以内で入力してください。'
+				).s
+			assert errmsg == null;
+
+		it 'minlen => fail', () ->
+			errmsg = null;
+			nvalidr('１２３４５６').minlen(7, () ->
+					errmsg = '7文字以上で入力してください。'
+				).s
+			assert errmsg == '7文字以上で入力してください。';
+
+		it 'length => success', () ->
+			errmsg = null;
+			nvalidr('１２３４５６７８').length(4, 8, () ->
+					errmsg = '7文字以内で入力してください。'
+				).s
+			assert errmsg == null;
+
+		it 'length => fail', () ->
+			errmsg = null;
+			nvalidr('１２３').length(4, 8, () ->
+					errmsg = '4〜8文字で入力してください。'
+				).s
+			assert errmsg == '4〜8文字で入力してください。';
+
+		it 'max => fail', () ->
+			errmsg = null;
+			nvalidr(21).max(20, () ->
+					errmsg = '20以下の数値で指定してください。'
+				).s
+			assert errmsg == '20以下の数値で指定してください。';
+
+		it 'min => fail', () ->
+			errmsg = null;
+			nvalidr('19').min(20, () ->
+					errmsg = '20以上の数値で指定してください。'
+				).s
+			assert errmsg == '20以上の数値で指定してください。';
+
+		it 'range => fail', () ->
+			errmsg = null;
+			nvalidr('19').range(20, 40, () ->
+					errmsg = '20〜40の数値で指定してください。'
+				).s
+			assert errmsg == '20〜40の数値で指定してください。';
+
+		it 'presence => fail', () ->
+			errmsg = null;
+			nvalidr('').presence(() ->
+					errmsg = '値を入力してください。'
+				).s
+			assert errmsg == '値を入力してください。';
+
 
 
 
