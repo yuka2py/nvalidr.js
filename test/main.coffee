@@ -100,9 +100,9 @@ describe 'nvalidr/', () ->
 			assert cnv == '0123456789'
 
 		it '全角記号 => 半角記号', () ->
-			org = '．，！？”’‘＠＿：；＃＄％＆（）－＝＊＋－／＜＞［￥］＾｛｜｝～、。「」・ー'
+			org = '．，！？”’‘＠＿：；＃＄％＆（）＝＊＋－／＜＞［￥］＾｛｜｝～、。「」・ー'
 			cnv = nvalidr(org).replace(nvalidr.H_KIGO).s
-			assert cnv == '.,!?"\'`@_:;#$%&()-=*+-/<>[¥]^{|}~､｡｢｣･ｰ'
+			assert cnv == '.,!?"\'`@_:;#$%&()=*+-/<>[¥]^{|}~､｡｢｣･ｰ'
 
 		it '半角アルファベット => 全角アルファベット', () ->
 			org = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
@@ -115,9 +115,9 @@ describe 'nvalidr/', () ->
 			assert cnv == '０１２３４５６７８９'
 
 		it '半角記号 => 全角記号', () ->
-			org = '.,!?"\'`@_:;#$%&()-=*+-/<>[¥]^{|}~､｡｢｣･ｰ'
+			org = '.,!?"\'`@_:;#$%&()=*+-/<>[¥]^{|}~､｡｢｣･ｰ'
 			cnv = nvalidr(org).replace(nvalidr.Z_KIGO).s
-			assert cnv == '．，！？”’‘＠＿：；＃＄％＆（）－＝＊＋－／＜＞［￥］＾｛｜｝～、。「」・ー'
+			assert cnv == '．，！？”’‘＠＿：；＃＄％＆（）＝＊＋－／＜＞［￥］＾｛｜｝～、。「」・ー'
 
 		it '半角スペース => 全角スペース', () ->
 			org = ' '
@@ -141,31 +141,36 @@ describe 'nvalidr/', () ->
 
 
 	describe 'validation/', () ->
-		it 'ひらがなのみ', () ->
+		it 'hiragana', () ->
 			org = 'ｶﾗﾊﾞｲﾖばーすﾛｯﾃ'
 			cnv = nvalidr(org).hiragana().s
 			assert cnv == 'からばいよばーすろって'
-
-		it 'ひらがなのみ => 失敗', () ->
+		it 'hiragana => failed', () ->
 			err = null
 			nvalidr('ｶﾗﾊﾞｲﾖ漢字ばーすﾛｯﾃ').hiragana(() ->
 				err = 'ひらがなで入力してください。'
 			)
 			assert err == 'ひらがなで入力してください。'
 
-		it 'カタカナのみ', () ->
+		it 'katakana', () ->
 			org = 'ｶﾗﾊﾞｲﾖばーすﾛｯﾃ'
 			cnv = nvalidr(org).katakana().s
 			assert cnv == 'カラバイヨバースロッテ'
 
-		it 'カタカナのみ => 失敗', () ->
-			err = null
-			nvalidr('ｶﾗﾊﾞｲﾖ漢字ばーすﾛｯﾃ').katakana(() ->
-				err = 'カタカナで入力してください。'
-			)
-			assert err == 'カタカナで入力してください。'
+		it 'number', () ->
+			org = '-0１２，347．２あ'
+			cnv = nvalidr(org).number().s
+			assert cnv == '-012347.2'
 
+		it 'phone', () ->
+			org = '０１２３−４５６７ー８９０漢字'
+			cnv = nvalidr(org).phone().s
+			assert cnv == '0123-4567-890'
 
+		it 'email', () ->
+			org = 'ｉｎｆｏ＠ｈｏｇｅｈｏｇｅ.com';
+			cnv = nvalidr(org).email().s
+			assert cnv == 'info@hogehoge.com'
 
 
 
