@@ -198,6 +198,11 @@ describe 'nvalidr/', () ->
 			cnv = nvalidr(org).email().s
 			assert cnv == 'info@hogehoge.com'
 
+		it 'zipcode', () ->
+			org = '５４３ー００２１';
+			cnv = nvalidr(org).zipcode().s
+			assert cnv == '543-0021'
+
 		it 'maxlen => success', () ->
 			errmsg = null;
 			nvalidr('１２３４５６７').maxlen(7, () ->
