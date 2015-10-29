@@ -57,6 +57,42 @@ describe 'nvalidr/', () ->
 			assert err == '日付じゃありません'
 
 
+	describe 'time/', () ->
+		it 'invalid time string', () ->
+			org = 'あいう';
+			errmsg = null
+			nvalidr(org).time () ->
+				errmsg = '時刻じゃありません'
+			assert errmsg == '時刻じゃありません'
+
+		it 'valid time string HH:mm', () ->
+			org = '15:28';
+			dst = nvalidr(org).time().s
+			assert dst == '15:28'
+
+		it 'valid time string ', () ->
+			org = '１６：３２';
+			dst = nvalidr(org).time().s
+			assert dst == '16:32'
+
+		it 'with format', () ->
+			org = '14:22';
+			dst = nvalidr(org).time({format:'HH-mm'}).s
+			assert dst == '14-22'
+
+		it 'with patterns', () ->
+			org = '14:22';
+			dst = nvalidr(org).time({patterns:'HH-mm'}).s
+			assert dst == '14:22'
+
+		it 'wit options and error', () ->
+			org = 'あいう';
+			err = null
+			nvalidr(org).time {format:'YYYY/MM/DD'}, () ->
+				err = '時刻じゃありません'
+			assert err == '時刻じゃありません'
+
+
 	describe 'replace/', () ->
 
 		it 'map of array', () ->
@@ -206,71 +242,71 @@ describe 'nvalidr/', () ->
 		it 'maxlen => success', () ->
 			errmsg = null;
 			nvalidr('１２３４５６７').maxlen(7, () ->
-					errmsg = '7文字以内で入力してください。'
-				).s
+				errmsg = '7文字以内で入力してください。'
+			).s
 			assert errmsg == null;
 
 		it 'maxlen => fail', () ->
 			errmsg = null;
 			nvalidr('１２３４５６７８').maxlen(7, () ->
-					errmsg = '7文字以内で入力してください。'
-				).s
+				errmsg = '7文字以内で入力してください。'
+			).s
 			assert errmsg == '7文字以内で入力してください。'
 
 		it 'minlen => success', () ->
 			errmsg = null;
 			nvalidr('１２３４５６７').minlen(7, () ->
-					errmsg = '7文字以内で入力してください。'
-				).s
+				errmsg = '7文字以内で入力してください。'
+			).s
 			assert errmsg == null;
 
 		it 'minlen => fail', () ->
 			errmsg = null;
 			nvalidr('１２３４５６').minlen(7, () ->
-					errmsg = '7文字以上で入力してください。'
-				).s
+				errmsg = '7文字以上で入力してください。'
+			).s
 			assert errmsg == '7文字以上で入力してください。';
 
 		it 'length => success', () ->
 			errmsg = null;
 			nvalidr('１２３４５６７８').length(4, 8, () ->
-					errmsg = '7文字以内で入力してください。'
-				).s
+				errmsg = '7文字以内で入力してください。'
+			).s
 			assert errmsg == null;
 
 		it 'length => fail', () ->
 			errmsg = null;
 			nvalidr('１２３').length(4, 8, () ->
-					errmsg = '4〜8文字で入力してください。'
-				).s
+				errmsg = '4〜8文字で入力してください。'
+			).s
 			assert errmsg == '4〜8文字で入力してください。';
 
 		it 'max => fail', () ->
 			errmsg = null;
 			nvalidr(21).max(20, () ->
-					errmsg = '20以下の数値で指定してください。'
-				).s
+				errmsg = '20以下の数値で指定してください。'
+			).s
 			assert errmsg == '20以下の数値で指定してください。';
 
 		it 'min => fail', () ->
 			errmsg = null;
 			nvalidr('19').min(20, () ->
-					errmsg = '20以上の数値で指定してください。'
-				).s
+				errmsg = '20以上の数値で指定してください。'
+			).s
 			assert errmsg == '20以上の数値で指定してください。';
 
 		it 'range => fail', () ->
 			errmsg = null;
 			nvalidr('19').range(20, 40, () ->
-					errmsg = '20〜40の数値で指定してください。'
-				).s
+				errmsg = '20〜40の数値で指定してください。'
+			).s
 			assert errmsg == '20〜40の数値で指定してください。';
 
 		it 'presence => fail', () ->
 			errmsg = null;
 			nvalidr('').presence(() ->
-					errmsg = '値を入力してください。'
-				).s
+				errmsg = '値を入力してください。'
+			).s
 			assert errmsg == '値を入力してください。';
 
 
