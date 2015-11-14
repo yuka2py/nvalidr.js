@@ -20,6 +20,7 @@ n は日本の N！ そして normalize の N です。
     * normalize  --  replace/validate を同時に行う
     * validate  -- 値のチェックとエラーハンドルコールバックのコール
     * replace -- 文字列の置換
+    * filter  -- 関数による値の変更
     * presence -- 値の空チェック
     * trim -- トリム
     * ltrim -- 左トリム

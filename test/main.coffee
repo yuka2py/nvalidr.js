@@ -3,6 +3,24 @@ assert = require 'power-assert'
 
 describe 'nvalidr/', () ->
 
+	describe 'type/', () ->
+
+		it 'toInt', () ->
+			org = '1234.5';
+			dst = nvalidr(org).toInt();
+			assert dst == 1234
+
+		it 'toFloat', () ->
+			org = '1234.5';
+			dst = nvalidr(org).toFloat();
+			assert dst == 1234.5
+
+		it 'toNumber', () ->
+			org = '1234.5';
+			dst = nvalidr(org).toNumber();
+			assert dst == 1234.5
+
+
 	describe 'trim/', () ->
 
 		it 'trim', () ->
@@ -92,6 +110,14 @@ describe 'nvalidr/', () ->
 				err = '時刻じゃありません'
 			assert err == '時刻じゃありません'
 
+	describe 'filter/', () ->
+
+		it 'filter', () ->
+			org = 'あいうえお'
+			dst = nvalidr(org).filter((value) ->
+				value.replace('い', 'あ')
+			).s
+			assert dst == 'ああうえお'
 
 	describe 'replace/', () ->
 
